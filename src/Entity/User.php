@@ -50,7 +50,7 @@ class User
     private $roles;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\EntityEntry", mappedBy="user_id")
+     * @ORM\OneToMany(targetEntity="App\Entity\EntityEntry", mappedBy="user")
      * @var EntityEntry[]
      */
     private $entityEntries;
@@ -127,12 +127,18 @@ class User
         foreach ($this->roles as $role) {
             $rolesAliases[] = (string)$role;
         }
-        $answer = new Answer(false, [], new \Is\Sdk\Auth\User($this->id, $this->email, $rolesAliases));
+
+        $aces = [];
+        foreach ($this->entityEntries as $entityEntry) {
+            $aces[$entityEntry->getEntityName()][] = $entityEntry->getEntityExternalId();
+        }
+
+        $answer = new Answer(false, [], new \Is\Sdk\Auth\User($this->id, $this->email, $rolesAliases), $aces);
 
         foreach ($this->roles as $role) {
             try {
                 $permission = $role->getPermission($searchedPermission);
-                $answer = new Answer(true, $permission->getBusinessRules(), new \Is\Sdk\Auth\User($this->id, $this->email, $rolesAliases));
+                $answer = new Answer(true, $permission->getBusinessRules(), new \Is\Sdk\Auth\User($this->id, $this->email, $rolesAliases), $aces);
             } catch (NoPermissionFoundException $ex) {
                 // Do nothing
             }

@@ -54,4 +54,20 @@ class EntityEntry
         $this->entityExternalId = $entityExternalId;
         $this->user = $user;
     }
+
+    /**
+     * @return string
+     */
+    public function getEntityName()
+    {
+        return (string)$this->domainEntity;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEntityExternalId()
+    {
+        return $this->entityExternalId;
+    }
 }
