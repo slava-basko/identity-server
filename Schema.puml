@@ -1,0 +1,42 @@
+@startuml
+
+object User {
+    String email
+    String password
+    Role[] roles
+}
+
+object Role {
+    String name
+    Permission[] permissions
+}
+
+object DomainEntity {
+    String name
+}
+
+object Permission {
+    String operation
+    DomainEntity domainEntity
+    BusinessRule[] businessRules
+}
+
+object BusinessRule {
+    String name
+    String type
+    String rule
+}
+
+object Token {
+    User user
+    String token
+    DateTime expire
+}
+
+Token o-- User : has one >
+User *-- Role : has many >
+Role *-- Permission : has many >
+Permission o-- DomainEntity : has one >
+Permission *- BusinessRule : has many >
+
+@enduml

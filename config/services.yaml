@@ -1,0 +1,216 @@
+parameters:
+
+services:
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    App\:
+        resource: '../src/*'
+        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+
+    App\Controller\:
+        resource: '../src/Controller'
+        tags: ['controller.service_arguments']
+
+    App\Controller\ApiController:
+        arguments:
+            $rpcServiceManager: "@rpc_service_manager"
+
+
+    entity_repository.domain_entity:
+        class: App\Repository\DomainEntityRepository
+        factory: ["@doctrine.orm.default_entity_manager", "getRepository"]
+        arguments:
+            - App\Entity\DomainEntity
+
+    entity_repository.permission_entity:
+        class: App\Repository\PermissionRepository
+        factory: ["@doctrine.orm.default_entity_manager", "getRepository"]
+        arguments:
+            - App\Entity\Permission
+
+    entity_repository.role_entity:
+        class: App\Repository\RoleRepository
+        factory: ["@doctrine.orm.default_entity_manager", "getRepository"]
+        arguments:
+            - App\Entity\Role
+
+    entity_repository.user_entity:
+        class: App\Repository\UserRepository
+        factory: ["@doctrine.orm.default_entity_manager", "getRepository"]
+        arguments:
+            - App\Entity\User
+
+    entity_repository.token_entity:
+        class: App\Repository\TokenRepository
+        factory: ["@doctrine.orm.default_entity_manager", "getRepository"]
+        arguments:
+            - App\Entity\Token
+
+    entity_repository.entity_entry:
+        class: App\Repository\EntityEntryRepository
+        factory: ["@doctrine.orm.default_entity_manager", "getRepository"]
+        arguments:
+            - App\Entity\EntityEntry
+
+
+    query.domain_entity:
+        class: App\Query\DomainEntityQuery
+        arguments: ["@entity_repository.domain_entity"]
+
+    query.permissions:
+        class: App\Query\PermissionQuery
+        arguments: ["@entity_repository.permission_entity"]
+
+    query.roles:
+        class: App\Query\RoleQuery
+        arguments: ["@entity_repository.role_entity"]
+
+    query.users:
+        class: App\Query\UserQuery
+        arguments: ["@entity_repository.user_entity"]
+
+    query.token:
+        class: App\Query\TokenQuery
+        arguments: ["@entity_repository.token_entity"]
+
+
+    command_handler.create_domain_entity:
+        class: App\Handler\CreateDomainEntityCommandHandler
+        arguments: ['@entity_repository.domain_entity']
+        tags:
+            - { name: command_handler, handles: App\Command\CreateDomainEntityCommand }
+
+    command_handler.delete_domain_entity:
+        class: App\Handler\DeleteDomainEntityCommandHandler
+        arguments: ['@entity_repository.domain_entity']
+        tags:
+            - { name: command_handler, handles: App\Command\DeleteDomainEntityCommand }
+
+    command_handler.create_permission:
+        class: App\Handler\CreatePermissionCommandHandler
+        arguments: ['@entity_repository.permission_entity']
+        tags:
+            - { name: command_handler, handles: App\Command\CreatePermissionCommand }
+
+    command_handler.delete_permission:
+        class: App\Handler\DeletePermissionCommandHandler
+        arguments: ['@entity_repository.permission_entity']
+        tags:
+            - { name: command_handler, handles: App\Command\DeletePermissionCommand }
+
+    command_handler.save_role:
+        class: App\Handler\SaveRoleFromNameAndPermissionsAliasesCommandHandler
+        arguments: ['@entity_repository.role_entity', '@entity_repository.permission_entity']
+        tags:
+            - { name: command_handler, handles: App\Command\SaveRoleFromNameAndPermissionsAliasesCommand }
+
+    command_handler.delete_role:
+        class: App\Handler\DeleteRoleCommandHandler
+        arguments: ['@entity_repository.role_entity']
+        tags:
+            - { name: command_handler, handles: App\Command\DeleteRoleCommand }
+
+    command_handler.create_user:
+        class: App\Handler\CreateUserCommandHandler
+        arguments: ['@entity_repository.user_entity']
+        tags:
+            - { name: command_handler, handles: App\Command\CreateUserCommand }
+
+    command_handler.reset_user_password:
+        class: App\Handler\ResetUserPasswordCommandHandler
+        arguments:
+            - '@entity_repository.user_entity'
+        tags:
+            - { name: command_handler, handles: App\Command\ResetUserPasswordCommand }
+
+    command_handler.delete_user:
+        class: App\Handler\DeleteUserCommandHandler
+        arguments:
+            - '@entity_repository.user_entity'
+        tags:
+            - { name: command_handler, handles: App\Command\DeleteUserCommand }
+
+    command_handler.change_user_roles:
+        class: App\Handler\ChangeUserRolesCommandHandler
+        arguments:
+            - '@entity_repository.user_entity'
+            - '@entity_repository.role_entity'
+        tags:
+            - { name: command_handler, handles: App\Command\ChangeUserRolesCommand }
+
+    command_handler.login_user:
+        class: App\Handler\LoginUserCommandHandler
+        arguments:
+            - '@entity_repository.user_entity'
+            - '@entity_repository.token_entity'
+        tags:
+            - { name: command_handler, handles: App\Command\LoginUserCommand }
+
+    command_handler.create_entity_entry:
+        class: App\Handler\CreateEntityEntryCommandHandler
+        arguments:
+            - '@entity_repository.entity_entry'
+            - '@entity_repository.domain_entity'
+            - '@entity_repository.user_entity'
+        tags:
+            - { name: command_handler, handles: App\Command\CreateEntityEntryCommand }
+
+
+    rpc_service_manager:
+        class: App\Service\RpcServiceManager
+
+    rpc_ping:
+        class: App\RpcService\PingProcedure
+        tags:
+            - { name: rpc.service }
+
+    rpc_domain_entity:
+        class: App\RpcService\DomainEntityProcedure
+        arguments:
+            - "@command_bus"
+            - "@query.domain_entity"
+        tags:
+            - { name: rpc.service }
+
+    rpc_permission:
+        class: App\RpcService\PermissionProcedure
+        arguments:
+            - '@command_bus'
+            - '@entity_repository.domain_entity'
+            - '@query.permissions'
+        tags:
+            - { name: rpc.service }
+
+    rpc_role:
+        class: App\RpcService\RoleProcedure
+        arguments:
+            - '@command_bus'
+            - '@query.roles'
+        tags:
+            - { name: rpc.service }
+
+    rpc_user:
+        class: App\RpcService\UserProcedure
+        arguments:
+            - '@command_bus'
+        tags:
+            - { name: rpc.service }
+
+    rpc_auth:
+        class: App\RpcService\AuthService
+        arguments:
+            - '@command_bus'
+            - '@query.users'
+            - '@query.token'
+            - '@query.permissions'
+        tags:
+            - { name: rpc.service }
+
+    rpc_entity_entry:
+        class: App\RpcService\EntityEntryProcedure
+        arguments:
+            - '@command_bus'
+        tags:
+            - { name: rpc.service }
