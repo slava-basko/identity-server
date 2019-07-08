@@ -17,3 +17,11 @@ Open ```IS.jmx``` in jmeter and run.
 Dev
 ---
 Last error: -32017
+
+Service requires 
+ctype
+iconv
+
+Configs
+.env 
+replace: mysql_user, mysql_pass, mysql_host, mysql_port credentials in DATABASE_URL (DATABASE_URL=mysql://mysql_user:mysql_pass@mysql_host:mysql_port/is)
