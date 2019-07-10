@@ -17,3 +17,7 @@ Open ```IS.jmx``` in jmeter and run.
 Dev
 ---
 Last error: -32017
+
+Service requires 
+ctype
+iconv

@@ -10,7 +10,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\EntityEntryRepository")
- * @ORM\Table(name="entity_entry")
+ * @ORM\Table(name="entity_entry", uniqueConstraints={
+ *      @ORM\UniqueConstraint(name="uniq_external_id_user", columns={"entity_external_id", "user_id"})
+ * })
  */
 class EntityEntry
 {
@@ -35,7 +37,7 @@ class EntityEntry
     private $entityExternalId;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\User")
+     * @ORM\ManyToOne(targetEntity="App\Entity\User")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      * @var User
      */
