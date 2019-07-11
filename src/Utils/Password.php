@@ -14,7 +14,7 @@ class Password
     /**
      * @var array
      */
-    public static $supported_algorithms_hashing = ['bcrypt', 'md5'];
+    public static $supportedAlgorithmsHashing = ['bcrypt', 'md5'];
 
     /**
      * @param $password
@@ -23,7 +23,7 @@ class Password
      */
     public static function hash($password)
     {
-        if(!isset($_ENV['algorithmPasswordHashing']) || !in_array($_ENV['algorithmPasswordHashing'], self::$supported_algorithms_hashing)){
+        if(!isset($_ENV['algorithmPasswordHashing']) || !in_array($_ENV['algorithmPasswordHashing'], self::$supportedAlgorithmsHashing)){
             throw new WrongAlgorithmPasswordHashException();
         }
         $algorithm = $_ENV['algorithmPasswordHashing'];
