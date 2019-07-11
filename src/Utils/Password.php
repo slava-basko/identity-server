@@ -23,10 +23,10 @@ class Password
      */
     public static function hash($password)
     {
-        if(!isset($_ENV['algorithmPasswordHashing']) || !in_array($_ENV['algorithmPasswordHashing'], self::$supportedAlgorithmsHashing)){
+        if(!isset($_ENV['ALGORITHM_PASSWORD_HASHING']) || !in_array($_ENV['ALGORITHM_PASSWORD_HASHING'], self::$supportedAlgorithmsHashing)){
             throw new WrongAlgorithmPasswordHashException();
         }
-        $algorithm = $_ENV['algorithmPasswordHashing'];
+        $algorithm = $_ENV['ALGORITHM_PASSWORD_HASHING'];
         return self::$algorithm($password);
     }
 
