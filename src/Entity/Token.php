@@ -54,7 +54,7 @@ class Token
         $this->token = Uuid::generate();
         
         $expire = new \DateTime();
-        $expire->add(new \DateInterval('PT2H'));
+        $expire->add(new \DateInterval($_ENV['TOKEN_EXPIRE']));
         $this->expire = $expire;
     }
 
