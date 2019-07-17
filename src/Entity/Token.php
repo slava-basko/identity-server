@@ -10,6 +10,7 @@ use App\Exceptions\Logic\TokenExpiredException;
 use App\Utils\Uuid;
 use Doctrine\ORM\Mapping as ORM;
 use Is\Sdk\Value\Answer;
+use \App\Utils\Env;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\TokenRepository")
@@ -49,7 +50,7 @@ class Token
     public function __construct(User $user)
     {
 
-        $token_expiration_time = \App\Utils\Env::getenv('TOKEN_EXPIRATION_TIME');
+        $token_expiration_time = Env::get('TOKEN_EXPIRATION_TIME');
         $expire = new \DateTime();
         $expire->add(new \DateInterval($token_expiration_time));
         $this->expire = $expire;

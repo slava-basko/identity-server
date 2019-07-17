@@ -4,7 +4,7 @@ namespace App\Utils;
 
 class Env
 {
-    public static function getenv($var)
+    public static function get($var)
     {
         if(!isset($_ENV[$var])){
             throw new \InvalidArgumentException('Undefined environment variable: '.$var);
