@@ -48,14 +48,15 @@ class Token
      */
     public function __construct(User $user)
     {
+
+        $token_expiration_time = \App\Utils\Env::getenv('TOKEN_EXPIRATION_TIME');
+        $expire = new \DateTime();
+        $expire->add(new \DateInterval($token_expiration_time));
+        $this->expire = $expire;
+
         $this->id = Uuid::generate();
         $this->user = $user;
-
         $this->token = Uuid::generate();
-        
-        $expire = new \DateTime();
-        $expire->add(new \DateInterval($_ENV['TOKEN_EXPIRE']));
-        $this->expire = $expire;
     }
 
     /**
