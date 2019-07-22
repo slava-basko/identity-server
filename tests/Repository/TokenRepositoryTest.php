@@ -10,6 +10,7 @@ namespace Tests\App\Repository;
 
 use App\Entity\Token;
 use App\Entity\User;
+use App\Exceptions\Logic\TokenExistException;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\StringInput;
@@ -28,17 +29,14 @@ class TokenRepositoryTest extends KernelTestCase
         $this->runCommand('doctrine:database:drop --force');
         $this->runCommand('doctrine:database:create');
         $this->runCommand('doctrine:schema:create');
-//        $this->runCommand('doctrine:fixtures:load --append --no-interaction');
-        
-        $kernel = self::bootKernel();
 
+        $kernel = self::bootKernel();
         $this->em = $kernel->getContainer()->get('doctrine')->getManager();
         $this->user = new User('test@gmail.com', 'test', []);
 
         $this->em->persist($this->user);
         $this->em->flush();
     }
-
 
     protected function runCommand($command)
     {
@@ -51,16 +49,22 @@ class TokenRepositoryTest extends KernelTestCase
         $user = $this->em->getRepository(User::class)->findOneBy(['id' => $this->user->getId()]);
         $token =  $this->em->getRepository(Token::class)->createNewFor($user);
         $this->assertInstanceOf(Token::class, $token);
+        $this->em->persist($token);
+        $this->em->flush();
+
+        $expire = new \DateTime('2000-01-01');
+        $token->setExpire($expire);
+
+        $token =  $this->em->getRepository(Token::class)->createNewFor($user);
+        $this->assertInstanceOf(Token::class, $token);
+
+        $this->expectException(TokenExistException::class);
+        $this->em->getRepository(Token::class)->createNewFor($user);
     }
 
     protected function tearDown():void
     {
         parent::tearDown();
-
-        $user = $this->em->merge($this->user);
-        $this->em->remove($user);
-
-        $this->em->flush();
 
         $this->em->close();
         $this->em= null;

@@ -117,4 +117,9 @@ class Token
 
         return $this->user->hasPermission($searchedPermission);
     }
+
+    public function setExpire($expire)
+    {
+        $this->expire = $expire;
+    }
 }
