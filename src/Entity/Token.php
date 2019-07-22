@@ -93,13 +93,25 @@ class Token
     }
 
     /**
+     * @return bool
+     * @throws \Exception
+     */
+    public function isExpired()
+    {
+        $now = new \DateTime();
+        if ($now > $this->expire) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * @param PermissionInterface $searchedPermission
      * @return Answer
      */
     public function isTokenOwnerHasPermission(PermissionInterface $searchedPermission): Answer
     {
-        $now = new \DateTime();
-        if ($now > $this->expire) {
+        if ($this->isExpired()) {
             throw new TokenExpiredException();
         }
 
