@@ -9,3 +9,8 @@
 ###< symfony/framework-bundle ###
 /.idea
 /jmeter.log
+
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###

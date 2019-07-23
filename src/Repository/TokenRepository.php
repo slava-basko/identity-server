@@ -23,10 +23,15 @@ class TokenRepository extends EntityRepository
     public function createNewFor(User $user): Token
     {
         $token = $this->findOneBy(['user' => $user->getId()]);
-        if ($token instanceof Token) {
+
+        if ($token instanceof Token && !$token->isExpired()) {
             throw new TokenExistException();
         }
 
+        if ($token instanceof Token) {
+            $em = $this->getEntityManager();
+            $em->remove($token);
+        }
         return new Token($user);
     }
 
