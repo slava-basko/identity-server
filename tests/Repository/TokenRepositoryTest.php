@@ -11,12 +11,16 @@ namespace Tests\App\Repository;
 use App\Entity\Token;
 use App\Entity\User;
 use App\Exceptions\Logic\TokenExistException;
+use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\StringInput;
 
 class TokenRepositoryTest extends KernelTestCase
 {
+    /**
+     * @var EntityManager
+     */
     private $em;
     private $user;
     private $application;
@@ -53,7 +57,10 @@ class TokenRepositoryTest extends KernelTestCase
         $this->em->flush();
 
         $expire = new \DateTime('2000-01-01');
-        $token->setExpire($expire);
+        $reflection = new \ReflectionClass($token);
+        $property = $reflection->getProperty('expire');
+        $property->setAccessible(true);
+        $property->setValue($token, $expire);
 
         $token =  $this->em->getRepository(Token::class)->createNewFor($user);
         $this->assertInstanceOf(Token::class, $token);
