@@ -9,6 +9,7 @@ use App\Command\ChangeUserRolesCommand;
 use App\Command\CreateUserCommand;
 use App\Command\DeleteUserCommand;
 use App\Command\ResetUserPasswordCommand;
+use App\Query\UserQuery;
 use Is\Sdk\Service\Interfaces\UserService;
 use SimpleBus\Message\Bus\Middleware\MessageBusSupportingMiddleware;
 
@@ -20,14 +21,22 @@ class UserProcedure implements UserService
     private $commandBus;
 
     /**
+     * @var UserQuery
+     */
+    private $userQuery;
+
+    /**
      * User constructor.
      * @param MessageBusSupportingMiddleware $commandBus
+     * @param UserQuery $userQuery
      */
     public function __construct(
-        MessageBusSupportingMiddleware $commandBus
+        MessageBusSupportingMiddleware $commandBus,
+        UserQuery $userQuery
     )
     {
         $this->commandBus = $commandBus;
+        $this->userQuery = $userQuery;
     }
 
     /**
@@ -75,5 +84,14 @@ class UserProcedure implements UserService
         $command = new DeleteUserCommand($email);
         $this->commandBus->handle($command);
         return true;
+    }
+
+    /**
+     * @param string $email
+     * @return array
+     */
+    public function getUserRoles(string $email)
+    {
+        return $this->userQuery->getUserRoles($email);
     }
 }

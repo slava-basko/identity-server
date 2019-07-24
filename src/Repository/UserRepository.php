@@ -62,4 +62,20 @@ class UserRepository extends EntityRepository
          */
         return $user;
     }
+
+    /**
+     * @param string $email
+     * @return array
+     */
+    public function getUserRoles(string $email)
+    {
+        $res = $this->createQueryBuilder('u')
+            ->select('ur.name')
+            ->where('u.email = :email')
+            ->setParameter('email', $email)
+            ->leftJoin('u.roles', 'ur')
+            ->getQuery()
+            ->getArrayResult();
+        return $res;
+    }
 }
