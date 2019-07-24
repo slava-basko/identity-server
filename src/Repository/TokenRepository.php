@@ -33,7 +33,7 @@ class TokenRepository extends EntityRepository
             $em->remove($token);
             $em->flush();
         }
-        return $token;
+        return new Token($user);
     }
 
     /**
