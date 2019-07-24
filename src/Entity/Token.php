@@ -49,32 +49,15 @@ class Token
      */
     public function __construct(User $user)
     {
-
-        $this->setExpire();
-        $this->generateToken();
-
-        $this->id = Uuid::generate();
-        $this->user = $user;
-
-    }
-
-    public function setExpire()
-    {
         $token_expiration_time = Env::get('TOKEN_EXPIRATION_TIME');
         $expire = new \DateTime();
         $expire->add(new \DateInterval($token_expiration_time));
         $this->expire = $expire;
-    }
 
-    public function generateToken()
-    {
+        $this->id = Uuid::generate();
+        $this->user = $user;
         $this->token = Uuid::generate();
-    }
 
-    public function updateToken()
-    {
-        $this->setExpire();
-        $this->generateToken();
     }
 
     /**

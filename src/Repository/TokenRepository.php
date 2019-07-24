@@ -29,9 +29,9 @@ class TokenRepository extends EntityRepository
         }
 
         if ($token instanceof Token) {
-            $token->updateToken();
-        }else{
-            $token =  new Token($user);
+            $em = $this->getEntityManager();
+            $em->remove($token);
+            $em->flush();
         }
         return $token;
     }
