@@ -80,6 +80,10 @@ class UserRepository extends EntityRepository
             ->leftJoin('p.domainEntity', 'd')
             ->getQuery()
             ->getArrayResult();
+
+        if (!$userInfo) {
+            throw new UserNotExistException();
+        }
         $res = [];
         foreach ($userInfo as $item){
             $res['roles'][$item['role']] = $item['role'];
