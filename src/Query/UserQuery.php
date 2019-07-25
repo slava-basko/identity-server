@@ -34,4 +34,13 @@ class UserQuery
     {
         return $this->userRepository->getUserByEmail($email);
     }
+
+    /**
+     * @param string $email
+     * @return array
+     */
+    public function getUser(string $email)
+    {
+        return $this->userRepository->getUser($email);
+    }
 }

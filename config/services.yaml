@@ -195,6 +195,7 @@ services:
         class: App\RpcService\UserProcedure
         arguments:
             - '@command_bus'
+            - '@query.users'
         tags:
             - { name: rpc.service }
 
