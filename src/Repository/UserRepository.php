@@ -83,12 +83,12 @@ class UserRepository extends EntityRepository
             throw new UserNotExistException();
         }
         $res = [
-            'id' =>$userInfo[0]['id'],
+            'id' => $userInfo[0]['id'],
             'email' => $email,
             'roles' => []
         ];
-        foreach ($userInfo as $item){
-            $res['roles'][$item['role']][$item['domainName']][]=$item['permission'];
+        foreach ($userInfo as $item) {
+            $res['roles'][$item['role']][$item['domainName']][] = $item['permission'];
         }
         return $res;
     }
