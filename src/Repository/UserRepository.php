@@ -67,15 +67,24 @@ class UserRepository extends EntityRepository
      * @param string $email
      * @return array
      */
-    public function getUserRoles(string $email)
+
+
+    public function getUser(string $email)
     {
-        $res = $this->createQueryBuilder('u')
-            ->select('ur.name')
+        $userInfo = $this->createQueryBuilder('u')
+            ->select('ur.name as role', 'p.operation as permission', 'd.name as domainName')
             ->where('u.email = :email')
             ->setParameter('email', $email)
             ->leftJoin('u.roles', 'ur')
+            ->leftJoin('ur.permissions', 'p')
+            ->leftJoin('p.domainEntity', 'd')
             ->getQuery()
             ->getArrayResult();
+        $res = [];
+        foreach ($userInfo as $item){
+            $res['roles'][$item['role']] = $item['role'];
+            $res['permissions'][$item['domainName']][] = $item['permission'];
+        }
         return $res;
     }
 }

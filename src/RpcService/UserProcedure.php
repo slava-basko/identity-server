@@ -90,8 +90,8 @@ class UserProcedure implements UserService
      * @param string $email
      * @return array
      */
-    public function getUserRoles(string $email)
+    public function getUser($email)
     {
-        return $this->userQuery->getUserRoles($email);
+        return $this->userQuery->getUser($email);
     }
 }

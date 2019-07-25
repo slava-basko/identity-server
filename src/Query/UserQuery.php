@@ -39,8 +39,8 @@ class UserQuery
      * @param string $email
      * @return array
      */
-    public function getUserRoles(string $email)
+    public function getUser(string $email)
     {
-        return $this->userRepository->getUserRoles($email);
+        return $this->userRepository->getUser($email);
     }
 }
