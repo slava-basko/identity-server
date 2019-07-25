@@ -67,12 +67,10 @@ class UserRepository extends EntityRepository
      * @param string $email
      * @return array
      */
-
-
     public function getUser(string $email)
     {
         $userInfo = $this->createQueryBuilder('u')
-            ->select('ur.name as role', 'p.operation as permission', 'd.name as domainName')
+            ->select('u.id, ur.name as role', 'p.operation as permission', 'd.name as domainName')
             ->where('u.email = :email')
             ->setParameter('email', $email)
             ->leftJoin('u.roles', 'ur')
@@ -84,10 +82,13 @@ class UserRepository extends EntityRepository
         if (!$userInfo) {
             throw new UserNotExistException();
         }
-        $res = [];
+        $res = [
+            'id' =>$userInfo[0]['id'],
+            'email' => $email,
+            'roles' => []
+        ];
         foreach ($userInfo as $item){
-            $res['roles'][$item['role']] = $item['role'];
-            $res['permissions'][$item['domainName']][] = $item['permission'];
+            $res['roles'][$item['role']][$item['domainName']][]=$item['permission'];
         }
         return $res;
     }
