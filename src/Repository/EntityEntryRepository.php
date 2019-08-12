@@ -26,7 +26,7 @@ class EntityEntryRepository extends EntityRepository
      */
     public function createNew(DomainEntity $domainEntity, $entityExternalId, User $user): EntityEntry
     {
-        $entityEntry = $this->findOneBy(['entityExternalId' => $entityExternalId]);
+        $entityEntry = $this->findOneBy(['entityExternalId' => $entityExternalId, 'user' => $user->getId()]);
         if ($entityEntry instanceof EntityEntry) {
             throw new EntityEntryExistException();
         }
