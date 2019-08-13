@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Zend\Json\Server\Smd;
+use Symfony\Component\HttpFoundation\Response;
 
 class ApiController extends AbstractController
 {
@@ -40,7 +41,7 @@ class ApiController extends AbstractController
 
     /**
      * @param Request $request
-     * @return \App\Http\JsonResponse|null|JsonResponse|\Zend\Json\Server\Response
+     * @return JsonResponse|Response
      */
     public function index(Request $request)
     {
@@ -58,6 +59,15 @@ class ApiController extends AbstractController
             return new JsonResponse($server->getServiceMap()->toArray());
         }
 
-        return \App\Http\JsonResponse::fromZendResponse($server->handle(), $this->logger);
+        try {
+            return new Response($server->handle(), 200, [
+                'content-type' => 'application/json'
+            ]);
+        } catch (\Exception $exception) {
+            $this->logger->error($exception->getMessage());
+            return new Response('Error. See logs.', 200, [
+                'content-type' => 'application/json'
+            ]);
+        }
     }
 }

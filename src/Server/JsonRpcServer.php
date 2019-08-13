@@ -8,6 +8,8 @@ namespace App\Server;
 use Respect\Validation\Exceptions\NestedValidationException;
 use Zend\Json\Server\Error;
 use Zend\Json\Server\Server;
+use Zend\Json\Server\Request;
+use Zend\Json\Server\Response;
 
 class JsonRpcServer extends Server
 {
@@ -31,5 +33,31 @@ class JsonRpcServer extends Server
         $error = new Error($fault, $code, $data);
         $this->getResponse()->setError($error);
         return $error;
+    }
+
+    /**
+     * @param bool $request
+     * @return string|Response|null
+     */
+    public function handle($request = false)
+    {
+        $raw = $this->getRequest()->getRawJson();
+        $raw = json_decode($raw, true);
+        $keys = array_keys($raw);
+        $results = [];
+        if ($keys == array_keys($keys)) {
+            foreach ($raw as $part) {
+                $req = new Request();
+                $req->loadJson(json_encode($part));
+                parent::setRequest($req);
+                parent::setResponse(new Response\Http());
+                $resp = parent::handle($request);
+                $results[] = $resp->toJson();
+            }
+            $response = '['.implode(', ', $results).']';
+        } else {
+            $response = parent::handle($request);
+        }
+        return $response;
     }
 }
