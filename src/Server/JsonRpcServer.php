@@ -67,7 +67,7 @@ class JsonRpcServer extends Server
                     $results[] = $resp->toJson();
                 } catch (\Exception $exception) {
                     $this->logger->error('Error handling request!!! Request: '.json_encode($part) . ", message: " .$exception->getMessage());
-                    $results[] = '{"jsonrpc": "2.0", "error": {"code": -32000, "message": "Error. See logs."}, "id": 1}';
+                    $results[] = '{"jsonrpc": "2.0", "error": {"code": -32000, "message": "'.$exception->getMessage().'"}, "id": '.$part['id'].'}';
                 }
             }
             $response = '['.implode(', ', $results).']';
