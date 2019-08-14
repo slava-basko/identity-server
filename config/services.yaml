@@ -15,8 +15,13 @@ services:
 
     App\Controller\ApiController:
         arguments:
-            $rpcServiceManager: "@rpc_service_manager"
+            - "@rpc_service_manager"
+            - "@rpc_server"
 
+    rpc_server:
+        class: App\Server\JsonRpcServer
+        arguments:
+            - '@monolog.logger'
 
     entity_repository.domain_entity:
         class: App\Repository\DomainEntityRepository
