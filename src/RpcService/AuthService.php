@@ -53,14 +53,15 @@ class AuthService implements \Is\Sdk\Service\Interfaces\AuthService
         $this->permissionQuery = $permissionQuery;
     }
 
-    /**
-     * @param $email
-     * @param $password
-     * @return Token
+    /**\
+     * @param string $email
+     * @param string $password
+     * @param array|null $additionalData
+     * @return Token|mixed
      */
-    public function login($email, $password)
+    public function login($email, $password, $additionalData = null)
     {
-        $command = new LoginUserCommand($email, $password);
+        $command = new LoginUserCommand($email, $password, $additionalData);
         $this->commandBus->handle($command);
 
         $user = $this->userQuery->getUserByEmail($email);

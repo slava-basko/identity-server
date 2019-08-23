@@ -8,6 +8,7 @@ namespace App\Entity;
 use App\Entity\Interfaces\PermissionInterface;
 use App\Exceptions\Logic\TokenExpiredException;
 use App\Utils\Uuid;
+use App\Value\User\AdditionalData;
 use Doctrine\ORM\Mapping as ORM;
 use Is\Sdk\Value\Answer;
 use \App\Utils\Env;
@@ -25,7 +26,7 @@ class Token
     protected $id;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\User")
+     * @ORM\ManyToOne(targetEntity="App\Entity\User")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      * @var User
      */
@@ -44,10 +45,24 @@ class Token
     private $expire;
 
     /**
+     * @ORM\Column(type="string", nullable=true)
+     * @var string|null
+     */
+    private $ip = null;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     * @var string|null
+     */
+    private $userAgent = null;
+
+    /**
      * Token constructor.
      * @param User $user
+     * @param object|null $additionalData
+     * @throws \Exception
      */
-    public function __construct(User $user)
+    public function __construct(User $user, $additionalData)
     {
         $token_expiration_time = Env::get('TOKEN_EXPIRATION_TIME');
         $expire = new \DateTime();
@@ -57,6 +72,10 @@ class Token
         $this->id = Uuid::generate();
         $this->user = $user;
         $this->token = Uuid::generate();
+        if($additionalData){
+            $this->userAgent = $additionalData->getUserAgent();
+            $this->ip = $additionalData->getIp();
+        }
 
     }
 

@@ -40,7 +40,7 @@ class LoginUserCommandHandler
     public function handle(LoginUserCommand $command)
     {
         $user = $this->userRepository->getUserByEmail($command->getEmail());
-        $token = $this->tokenRepository->createNewFor($user);
+        $token = $this->tokenRepository->createNewFor($user, $command->getAdditionalData());
         $this->tokenRepository->save($token);
     }
 }
