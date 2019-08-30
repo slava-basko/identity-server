@@ -24,7 +24,7 @@ class AdditionalData
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getIp()
     {
@@ -32,7 +32,7 @@ class AdditionalData
     }
     
     /**
-     * @return string
+     * @return string|null
      */
     public function getUserAgent()
     {

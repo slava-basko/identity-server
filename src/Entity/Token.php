@@ -59,10 +59,10 @@ class Token
     /**
      * Token constructor.
      * @param User $user
-     * @param object|null $additionalData
+     * @param AdditionalData $additionalData
      * @throws \Exception
      */
-    public function __construct(User $user, $additionalData)
+    public function __construct(User $user, AdditionalData $additionalData)
     {
         $token_expiration_time = Env::get('TOKEN_EXPIRATION_TIME');
         $expire = new \DateTime();
@@ -72,10 +72,8 @@ class Token
         $this->id = Uuid::generate();
         $this->user = $user;
         $this->token = Uuid::generate();
-        if($additionalData){
-            $this->userAgent = $additionalData->getUserAgent();
-            $this->ip = $additionalData->getIp();
-        }
+        $this->userAgent = $additionalData->getUserAgent();
+        $this->ip = $additionalData->getIp();
 
     }
 

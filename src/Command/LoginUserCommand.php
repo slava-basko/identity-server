@@ -28,18 +28,16 @@ class LoginUserCommand
      * LoginUserCommand constructor.
      * @param string $email
      * @param string $password
-     * @param array|null $additionalData
+     * @param array $additionalData
      */
-    public function __construct(string $email, string $password, $additionalData)
+    public function __construct(string $email, string $password, array $additionalData)
     {
         v::email()->assert($email);
         v::notEmpty()->assert($password);
 
         $this->email = $email;
         $this->password = $password;
-        if(is_array($additionalData)){
-            $this->additionalData = new AdditionalData($additionalData);
-        }
+        $this->additionalData = new AdditionalData($additionalData);
     }
 
     /**

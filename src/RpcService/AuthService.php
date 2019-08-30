@@ -61,6 +61,7 @@ class AuthService implements \Is\Sdk\Service\Interfaces\AuthService
      */
     public function login($email, $password, $additionalData = null)
     {
+        $additionalData = is_array($additionalData) ? $additionalData :[];
         $command = new LoginUserCommand($email, $password, $additionalData);
         $this->commandBus->handle($command);
 
