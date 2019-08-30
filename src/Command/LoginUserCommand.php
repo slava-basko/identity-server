@@ -20,7 +20,7 @@ class LoginUserCommand
     private $password;
 
     /**
-     * @var array|null
+     * @var AdditionalData
      */
     private $additionalData = null;
 
