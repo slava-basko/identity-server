@@ -7,9 +7,9 @@ namespace App\Repository;
 
 use App\Entity\Token;
 use App\Entity\User;
-use App\Exceptions\Logic\TokenExistException;
 use App\Exceptions\Logic\TokenNotExistException;
 use App\Repository\Traits\EntityPersistStateTrait;
+use App\Value\User\AdditionalData;
 use Doctrine\ORM\EntityRepository;
 
 class TokenRepository extends EntityRepository
@@ -18,22 +18,21 @@ class TokenRepository extends EntityRepository
 
     /**
      * @param User $user
+     * @param AdditionalData $additionalData
      * @return Token
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
      */
-    public function createNewFor(User $user): Token
+    public function createNewFor(User $user, AdditionalData $additionalData): Token
     {
         $token = $this->findOneBy(['user' => $user->getId()]);
 
-        if ($token instanceof Token && !$token->isExpired()) {
-            throw new TokenExistException();
-        }
-
-        if ($token instanceof Token) {
+        if ($token instanceof Token && $token->isExpired()) {
             $em = $this->getEntityManager();
             $em->remove($token);
             $em->flush();
         }
-        return new Token($user);
+        return new Token($user, $additionalData);
     }
 
     /**
